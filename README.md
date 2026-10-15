@@ -1,4 +1,4 @@
-# Correcció del factor de potència
+# Compensació de factor de potència
 
 Laboratori interactiu en català per al mòdul **0962 Sistemes de potència** (RA1). Parteix d'una càrrega inductiva (RL o RLC sèrie) i hi afegeix condensadors en paral·lel per veure com canvien *Q*, *S*, *cos φ* i el corrent de línia. També permet calcular la capacitat necessària per arribar a un factor de potència objectiu.
 
