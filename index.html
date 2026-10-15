@@ -59,6 +59,13 @@
           <button class="btn primary" id="new-ex" type="button">Nou exercici</button>
           <button class="btn" id="copy-link" type="button" title="Copia un enllaç a aquest mateix exercici">Copia l'enllaç</button>
         </div>
+        <div class="row open">
+          <label class="field-inline" for="ex-num">Obre un exercici pel número
+            <input type="text" id="ex-num" inputmode="numeric" autocomplete="off" placeholder="p. ex. 4821" aria-describedby="open-help">
+          </label>
+          <button class="btn" id="open-ex" type="button">Obre</button>
+        </div>
+        <p class="hint-text open-help" id="open-help">Per recuperar un exercici anterior o fer el que t'ha assignat el professor. El número apareix a dalt a la dreta d'aquest requadre.</p>
         <p class="note" id="copy-msg" role="status" aria-live="polite"></p>
       </section>
 

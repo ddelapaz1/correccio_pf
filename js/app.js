@@ -51,17 +51,43 @@
   };
 
   /* ---------- exercici ---------- */
-  function newSeed() { return 1 + Math.floor(Math.random() * 99999); }
+  const MAX_SEED = 99999;
+  function newSeed() { return 1 + Math.floor(Math.random() * MAX_SEED); }
 
-  function loadExercise(seed, type) {
+  /** Nou exercici aleatori. El número sol ja identifica l'exercici: el tipus es deriva de la llavor. */
+  function newExercise() {
+    const want = $('#ex-type').value;
+    let seed = newSeed();
+    for (let i = 0; want !== 'auto' && i < 500 && M.generate(seed, 'auto').kind !== want; i++) seed = newSeed();
+    loadExercise(seed, 'auto');
+  }
+
+  /** Obre l'exercici amb el número escrit per l'alumne o el professor. */
+  function openByNumber() {
+    const inp = $('#ex-num');
+    const raw = inp.value.trim();
+    const n = Number(raw);
+    if (!/^\d+$/.test(raw) || n < 1 || n > MAX_SEED) {
+      $('#copy-msg').textContent = `Escriu un número enter entre 1 i ${MAX_SEED}.`;
+      inp.focus();
+      return;
+    }
+    setMode('ex');
+    loadExercise(n, 'auto');
+    inp.value = '';
+    $('#copy-msg').textContent = `S'ha obert l'exercici ${n}.`;
+  }
+
+  /** type: 'auto' (normal) o un tipus forçat, només per als enllaços antics amb &t=RL|RLC. */
+  function loadExercise(seed, type = 'auto') {
     state.exType = type;
     state.ex = M.generate(seed, type);
     state.sol = M.solve(state.ex);
     state.ok = {};
     state.revealed = false;
     state.bench.ex = [];
-    $('#ex-type').value = type;
-    try { history.replaceState(null, '', `#ex=${seed}&t=${type}`); } catch (e) { /* file:// */ }
+    if (type !== 'auto') $('#ex-type').value = type;
+    try { history.replaceState(null, '', type === 'auto' ? `#ex=${seed}` : `#ex=${seed}&t=${type}`); } catch (e) { /* file:// */ }
     renderStatement();
     renderAnswers();
     $('#solution').hidden = true;
@@ -546,8 +572,10 @@
       document.querySelectorAll('.ans').forEach((r) => { r.classList.remove('ok', 'bad'); r.querySelector('.mark').textContent = ''; r.querySelector('.fb').textContent = ''; });
       updateBadges(); update();
     });
-    $('#new-ex').addEventListener('click', () => loadExercise(newSeed(), $('#ex-type').value));
-    $('#ex-type').addEventListener('change', () => loadExercise(newSeed(), $('#ex-type').value));
+    $('#new-ex').addEventListener('click', newExercise);
+    $('#ex-type').addEventListener('change', newExercise);
+    $('#open-ex').addEventListener('click', openByNumber);
+    $('#ex-num').addEventListener('keydown', (e) => { if (e.key === 'Enter') openByNumber(); });
     $('#copy-link').addEventListener('click', async () => {
       const url = location.href;
       try { await navigator.clipboard.writeText(url); $('#copy-msg').textContent = 'Enllaç copiat. Qui l\'obri veurà aquest mateix exercici.'; }
@@ -573,7 +601,8 @@
 
     syncLab();
     const m = /ex=(\d+)(?:&t=(RLC|RL|auto))?/.exec(location.hash);
-    loadExercise(m ? Number(m[1]) : newSeed(), m && m[2] ? m[2] : 'auto');
+    if (m) loadExercise(Number(m[1]), m[2] || 'auto');
+    else newExercise();
   }
 
   window.addEventListener('hashchange', () => {

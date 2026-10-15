@@ -148,6 +148,9 @@ input[type="range"] { width: 100%; accent-color: var(--v); }
 .cap-buttons .btn { font-family: var(--f-mono); font-size: 13.5px; padding: 7px 10px; }
 .cap-buttons .btn::before { content: "+ "; color: var(--c); font-weight: 700; }
 .custom { margin-bottom: 12px; }
+.row.open { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--rule); }
+.row.open input { width: 140px; }
+.open-help { margin: 6px 0 0; font-size: 13px; }
 .custom .unit-input { width: 150px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 34px; padding: 8px; border: 1px dashed var(--rule); border-radius: 10px; }
 .chips:empty::before { content: "Cap condensador connectat"; color: var(--muted); font-size: 13.5px; padding: 2px 4px; }

@@ -17,7 +17,10 @@ Funciona íntegrament al navegador, sense dependències, comptes ni serveis exte
 - **Mostra la solució** fa la resolució pas a pas.
 - **Pas 3:** el banc de condensadors es desbloqueja quan *Qc* i *C* són correctes o quan s'ha mostrat la solució. L'alumne combina condensadors comercials (1 a 100 µF) o hi posa un valor personalitzat. L'aplicació indica si la compensació és insuficient, correcta, excessiva (*cos φ'* ≈ 1) o sobrecompensada (capacitiva).
 - Mentre no s'ha resolt el pas 1, l'aplicació no mostra els valors inicials, perquè l'alumne no pugui copiar-los.
-- Cada exercici té un número. **Copia l'enllaç** genera una URL (`#ex=4821&t=RLC`) que obre el mateix exercici a tothom, per exemple per a una prova o una correcció conjunta.
+- Cada exercici té un **número** (de 1 a 99999) que l'identifica completament: tipus de càrrega, valors i objectiu.
+  - **Obre un exercici pel número**: l'alumne escriu el número per recuperar un exercici anterior o per fer el que li ha assignat el professor (per exemple, «feu l'exercici 4821»).
+  - **Copia l'enllaç** genera una URL (`#ex=4821`) que obre directament el mateix exercici.
+  - El selector de tipus només filtra els exercicis nous. Un mateix número dona sempre el mateix exercici, sigui quin sigui el selector.
 
 ### Exploració lliure
 

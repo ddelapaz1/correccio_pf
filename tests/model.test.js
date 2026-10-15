@@ -65,6 +65,16 @@ test('Generador: reproduïble i dins de rangs', () => {
   }
 });
 
+test('El número sol identifica l\'exercici (tipus derivat de la llavor)', () => {
+  const kinds = new Set();
+  for (let seed = 1; seed <= 200; seed++) {
+    const a = M.generate(seed, 'auto');
+    assert.deepStrictEqual(a, M.generate(seed));
+    kinds.add(a.kind);
+  }
+  assert.deepStrictEqual([...kinds].sort(), ['RL', 'RLC']);
+});
+
 test('Comprovació i pistes', () => {
   const ex = M.generate(42, 'RLC');
   const s = M.solve(ex);
