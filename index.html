@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Correcció del factor de potència</title>
+<meta name="description" content="Laboratori interactiu: compensa una càrrega inductiva amb condensadors i observa com canvien Q, S, cos φ i el corrent de línia.">
+<meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e141a" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect width='22' height='22' rx='5' fill='%23132030'/%3E%3Cpath d='M5 17h12M5 17V6M5 17l12-7' fill='none' stroke='%23ffb23e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
+<script>try { const t = localStorage.getItem('cpf-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <span class="brand">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="5" fill="currentColor"/><path d="M5 17h12M5 17V6M5 17l12-7" fill="none" stroke="#ffb23e" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Correcció del factor de potència</span>
+    </span>
+    <nav class="modes" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-ex" aria-selected="true" data-mode="ex">Exercici</button>
+      <button role="tab" id="tab-lab" aria-selected="false" data-mode="lab">Exploració lliure</button>
+    </nav>
+    <button class="icon-btn" id="theme" type="button" aria-label="Canvia el tema clar/fosc" title="Tema clar/fosc">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13a6.5 6.5 0 0 0 0-13Zm0 1.5v10a5 5 0 0 1 0-10Z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <p class="eyebrow">0962 Sistemes de potència · RA1</p>
+    <h1>Compensa una càrrega inductiva amb condensadors</h1>
+    <p class="lede">Una càrrega amb bobines consumeix potència reactiva i fa circular més corrent del necessari. Si connectes condensadors <strong>en paral·lel</strong>, aporten reactiva de signe contrari: <var>P</var> es manté, però <var>Q</var>, <var>S</var> i el corrent de línia baixen, i <var>cos φ</var> s'acosta a 1.</p>
+  </section>
+
+  <div class="grid">
+    <!-- Columna esquerra: enunciat i càlculs / paràmetres -->
+    <div class="col">
+      <!-- MODE EXERCICI -->
+      <section class="card" data-show="ex" aria-labelledby="h-enunciat">
+        <div class="card-head">
+          <h2 id="h-enunciat">Enunciat</h2>
+          <span class="tag mono" id="ex-code"></span>
+        </div>
+        <p id="statement" class="statement"></p>
+        <div class="row gen">
+          <label class="field-inline">Tipus de càrrega
+            <select id="ex-type">
+              <option value="auto">Aleatòria</option>
+              <option value="RL">RL sèrie</option>
+              <option value="RLC">RLC sèrie</option>
+            </select>
+          </label>
+          <button class="btn primary" id="new-ex" type="button">Nou exercici</button>
+          <button class="btn" id="copy-link" type="button" title="Copia un enllaç a aquest mateix exercici">Copia l'enllaç</button>
+        </div>
+        <p class="note" id="copy-msg" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card" data-show="ex" aria-labelledby="h-pas1">
+        <div class="card-head"><h2 id="h-pas1"><span class="step">1</span>Estat inicial de la càrrega</h2><span class="badge" id="badge-1"></span></div>
+        <p class="hint-text">Calcula-ho sense condensadors. Pots escriure els decimals amb coma o amb punt. S'accepta un marge del 2 %.</p>
+        <div class="answers" id="answers-1"></div>
+      </section>
+
+      <section class="card" data-show="ex" aria-labelledby="h-pas2">
+        <div class="card-head"><h2 id="h-pas2"><span class="step">2</span>Compensació necessària</h2><span class="badge" id="badge-2"></span></div>
+        <p class="hint-text" id="pas2-text"></p>
+        <div class="answers" id="answers-2"></div>
+        <div class="row actions">
+          <button class="btn primary" id="check" type="button">Comprova</button>
+          <button class="btn" id="show-sol" type="button">Mostra la solució</button>
+          <button class="btn ghost" id="clear-ans" type="button">Esborra</button>
+        </div>
+        <div id="solution" class="solution" hidden></div>
+      </section>
+
+      <!-- MODE EXPLORACIÓ -->
+      <section class="card" data-show="lab" hidden aria-labelledby="h-params">
+        <div class="card-head"><h2 id="h-params">Càrrega i xarxa</h2></div>
+        <div class="sliders">
+          <label class="slider"><span>Tensió <var>V</var></span>
+            <select id="lab-V"><option value="230">230 V</option><option value="400">400 V</option><option value="127">127 V</option></select></label>
+          <label class="slider"><span>Freqüència <var>f</var></span>
+            <select id="lab-f"><option value="50">50 Hz</option><option value="60">60 Hz</option></select></label>
+          <label class="slider"><span>Resistència <var>R</var> <output id="o-R"></output></span>
+            <input type="range" id="lab-R" min="1" max="100" step="1" value="20"></label>
+          <label class="slider"><span>Inductància <var>L</var> <output id="o-L"></output></span>
+            <input type="range" id="lab-L" min="1" max="400" step="1" value="60"></label>
+          <label class="slider"><span>Condensador en sèrie <var>C</var><sub>s</sub> <output id="o-Cs"></output></span>
+            <input type="range" id="lab-Cs" min="0" max="1000" step="10" value="0"></label>
+          <label class="slider"><span>Objectiu <var>cos φ'</var> <output id="o-T"></output></span>
+            <input type="range" id="lab-T" min="0.80" max="1.00" step="0.01" value="0.95"></label>
+        </div>
+        <div class="need">
+          <div><span class="k">Qc necessària</span><span class="v mono" id="need-Qc"></span></div>
+          <div><span class="k">C necessària</span><span class="v mono" id="need-C"></span></div>
+          <button class="btn" id="apply-need" type="button">Posa aquesta C al banc</button>
+        </div>
+        <p class="note" id="lab-note"></p>
+      </section>
+
+      <section class="card theory" aria-labelledby="h-form">
+        <details>
+          <summary><h2 id="h-form">Fórmules</h2></summary>
+          <ul class="formulas">
+            <li><var>ω</var> = 2π<var>f</var> · <var>X<sub>L</sub></var> = <var>ωL</var> · <var>X<sub>C</sub></var> = 1 / (<var>ωC</var>)</li>
+            <li><var>Z</var> = √(<var>R</var>² + (<var>X<sub>L</sub></var> − <var>X<sub>C</sub></var>)²) · <var>I</var> = <var>V</var> / <var>Z</var></li>
+            <li><var>cos φ</var> = <var>R</var> / <var>Z</var> = <var>P</var> / <var>S</var></li>
+            <li><var>P</var> = <var>V I</var> cos φ · <var>Q</var> = <var>V I</var> sin φ · <var>S</var> = <var>V I</var></li>
+            <li><var>Q<sub>c</sub></var> = <var>P</var> (tg φ − tg φ')</li>
+            <li><var>C</var> = <var>Q<sub>c</sub></var> / (<var>ω V</var>²)</li>
+            <li><var>I'</var> = <var>P</var> / (<var>V</var> cos φ')</li>
+          </ul>
+        </details>
+      </section>
+    </div>
+
+    <!-- Columna dreta: banc d'instruments -->
+    <div class="col">
+      <section class="card" aria-labelledby="h-circ">
+        <div class="card-head"><h2 id="h-circ">Circuit</h2></div>
+        <svg id="circuit" class="fig" viewBox="0 0 560 230" role="img" aria-label="Esquema del circuit"></svg>
+      </section>
+
+      <section class="card bench" aria-labelledby="h-bench">
+        <div class="card-head"><h2 id="h-bench"><span class="step" data-show="ex">3</span>Banc de condensadors</h2><span class="tag mono" id="c-total"></span></div>
+        <div id="bench-lock" class="lock" hidden>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h.5Zm1.5 0h4V5a2 2 0 0 0-4 0v2Z" fill="currentColor"/></svg>
+          <span>Es desbloqueja quan el pas 2 (<var>Q<sub>c</sub></var> i <var>C</var>) és correcte o quan mostres la solució.</span>
+        </div>
+        <div id="bench-body">
+          <p class="hint-text">Afegeix condensadors en paral·lel amb la càrrega. Les capacitats en paral·lel se sumen. Fes clic en un condensador del banc per treure'l.</p>
+          <div class="cap-buttons" id="cap-buttons"></div>
+          <div class="row custom">
+            <label class="field-inline">Valor personalitzat
+              <span class="unit-input"><input type="text" inputmode="decimal" id="cap-custom" placeholder="p. ex. 3,3" aria-label="Capacitat personalitzada en µF"><span>µF</span></span>
+            </label>
+            <button class="btn" id="cap-add" type="button">Afegeix</button>
+            <button class="btn ghost" id="cap-clear" type="button">Buida el banc</button>
+          </div>
+          <div class="chips" id="chips" aria-live="polite"></div>
+          <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h-meas">
+        <div class="card-head"><h2 id="h-meas">Mesures</h2></div>
+        <svg id="pfmeter" class="fig meter" viewBox="0 0 440 104" role="img" aria-label="Indicador del factor de potència"></svg>
+        <div class="table-wrap">
+          <table class="meas">
+            <thead><tr><th></th><th>Sense compensar</th><th>Compensat</th><th>Variació</th></tr></thead>
+            <tbody id="meas-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="figs">
+        <section class="card" aria-labelledby="h-tri">
+          <div class="card-head"><h2 id="h-tri">Triangle de potències</h2></div>
+          <svg id="triangle" class="fig" viewBox="0 0 440 300" role="img" aria-label="Triangle de potències abans i després de compensar"></svg>
+          <ul class="legend">
+            <li><i class="sw dash"></i>Sense compensar</li>
+            <li><i class="sw solid"></i>Compensat</li>
+            <li><i class="sw c"></i><var>Q<sub>c</sub></var> dels condensadors</li>
+          </ul>
+        </section>
+        <section class="card" aria-labelledby="h-fas">
+          <div class="card-head"><h2 id="h-fas">Diagrama fasorial</h2></div>
+          <svg id="phasors" class="fig" viewBox="0 0 440 280" role="img" aria-label="Diagrama fasorial de tensió i corrents"></svg>
+          <ul class="legend">
+            <li><i class="sw v"></i><var>V</var></li>
+            <li><i class="sw i"></i><var>I</var> càrrega</li>
+            <li><i class="sw c"></i><var>I<sub>C</sub></var></li>
+            <li><i class="sw line"></i><var>I</var> línia</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="wrap foot">
+  <p>Model ideal en règim sinusoidal permanent: components ideals, sense pèrdues als condensadors ni a la línia. Codi obert · 0962 Sistemes de potència.</p>
+</footer>
+<script src="js/model.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
